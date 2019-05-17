@@ -27,7 +27,7 @@
         if (func_num_args() == 0){
           $this->id = '';
           $this->name = '';
-          $this->conference = new Conference();
+          $this->conference = '';
         }
 
         if (func_num_args() == 1){
