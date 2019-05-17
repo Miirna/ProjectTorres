@@ -1,0 +1,12 @@
+{
+  "files" : {
+    "logos" : "/logos/",
+    "teams" : "/teams/"
+  },
+  "mySqlConnection" : {
+    "server" : "localhost",
+    "database" : "nfl",
+    "user" : "root",
+    "password" : ""
+  }
+}

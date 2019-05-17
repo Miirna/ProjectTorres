@@ -8,9 +8,9 @@
 				//get files settings
 				$files = $config['files'];
 				//file location
-				if (isset($files[$key])) 
-					return 'http://'.$_SERVER['SERVER_NAME'].dirname($_SERVER['PHP_SELF']).$files[$key]; 
-				else 
+				if (isset($files[$key]))
+					return 'http://'.$_SERVER['SERVER_NAME'].dirname($_SERVER['PHP_SELF']).$files[$key];
+				else
 					return '';
 			}
 		}
