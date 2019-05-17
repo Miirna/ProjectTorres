@@ -6,10 +6,10 @@ class RecordNotFoundException extends Exception {
     //constructor
     public function __construct() {
         //0 arguments : generic messages
-        if(func_num_args == 0) 
+        if(func_num_args() == 0) 
             $this->messges = 'Record not found';
         //1 argument : detail message
-        if(func_num_args == 1)
+        if(func_num_args() == 1)
             $this->message = 'Record not found for id';
             func_get_arg(0);
     }

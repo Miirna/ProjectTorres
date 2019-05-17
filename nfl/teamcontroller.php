@@ -4,19 +4,24 @@
   if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     if ($parameters == ''){
       echo "Get all teams";
-    } else {
-      echo "Get one team";
-      $t = new Team();
-      $t->setId($parameters);
-      $t->setName('Los Angeles Chargers');
-      $t->setLogo('chargers.png');
-      echo json_encode(array(
-        'status' => 0,
-        'team' => json_decode($t->toJson())
-      ));
-
+    } else 
+        //get one
+        try {
+          //get object 
+          $t = new Team($parameters);
+          //display as JSON
+          echo json_encode(array(
+            'status' => 0,
+            'team' => json_decode($t->toJson())
+          ));
+        }
+        catch(RecordNotFoundException $ex){
+          echo json_encode(array(
+            'status' => 1,
+            'errorMessage' => $ex->getMessage()
+          ));
+        }    
     }
-  }
 
   if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 

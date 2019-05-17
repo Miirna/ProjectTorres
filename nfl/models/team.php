@@ -2,7 +2,7 @@
   //require_once('division.php');
   require_once(__DIR__.'/../config/config.php');
   require_once('connection.php');
-  require_once('exceptions/recordNotFoundException.php');
+  require_once('exception/recordNotFoundException.php');
 class Team
 {
   public $id;
@@ -43,7 +43,24 @@ class Team
       }
 
       if (func_num_args() == 1){
-
+        $arguments = func_get_args();
+        $connection = MySqlConnection::getConnection();
+        $query = 'select id, name, logo from teams where id = ?';
+        $command = $connection->prepare($query);
+        $command->bind_param('s', $arguments[0]);
+        $command->execute();
+        $command->bind_result($id, $name, $logo);
+        if($command->fetch()){
+          $this->id = $id;
+          $this->name = $name;
+          $this->logo = $logo;
+        }
+        else 
+          throw new RecordNotFoundException(func_get_arg(0));
+        //close connection
+        mysqli_stmt_close($command);
+        //close connection
+        $connection->close();
       }
 
       if (func_num_args() == 3){
@@ -59,6 +76,29 @@ class Team
       'name' => $this->name,
       'logo' => Config::getFileURL('teams').$this->logo
     ));
+  }
+
+  //class methods
+
+  //returns a list of teams
+  public static function getAll(){
+    $list = array(); //create list
+    $connection = MySqlConnection::getConnection();
+    $query = 'select id, name, logo from teams order by';
+    $command = $connection->prepare($query);
+    $command->execute();
+    $command->bind_result($id, $name, $logo);
+    while($command->fetch()){
+      array_push($list, new Team($id, $name, $logo));
+    }
+    mysqli_stmt_close($command);
+    $connection->close();
+    return $list;
+  }
+
+  //returns a JSON array with all the teams
+  public static function getAllToJSON() {
+
   }
 }
 
