@@ -98,7 +98,11 @@ class Team
 
   //returns a JSON array with all the teams
   public static function getAllToJSON() {
-
+    $jsonArray = array();
+    foreach(self::getAll() as $item){
+      array_push($jsonArray, json_decode($item->toJson()));
+    }
+    return json_encode($jsonArray);
   }
 }
 
