@@ -84,7 +84,7 @@ class Team
   public static function getAll(){
     $list = array(); //create list
     $connection = MySqlConnection::getConnection();
-    $query = 'select id, name, logo from teams order by';
+    $query = 'select id, name, logo from teams order by id';
     $command = $connection->prepare($query);
     $command->execute();
     $command->bind_result($id, $name, $logo);
@@ -97,7 +97,7 @@ class Team
   }
 
   //returns a JSON array with all the teams
-  public static function getAllToJSON() {
+  public static function getAllToJson() {
     $jsonArray = array();
     foreach(self::getAll() as $item){
       array_push($jsonArray, json_decode($item->toJson()));

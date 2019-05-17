@@ -2,8 +2,8 @@
   require_once('models/team.php');
 
   if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    if ($parameters == ''){
-      echo "Get all teams";
+    if($parameters == ''){
+      echo Team::getAllToJson();      
     } else 
         //get one
         try {
