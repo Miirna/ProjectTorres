@@ -1,7 +1,7 @@
 <?php
     require_once('models/conference.php');
 
-    if($_SERVER['REQUEST_NETHOD'] == 'GET'){
+    if($_SERVER['REQUEST_METHOD'] == 'GET'){
         if($parameters == ''){
             echo Conference::getAllToJson();
         } else

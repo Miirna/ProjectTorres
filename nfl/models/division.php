@@ -1,7 +1,7 @@
 <?php
   require_once('conference.php');
   require_once('connection.php');
-  require_once('exception/recordNotFoundExeption.php');
+  require_once('exception/recordNotFoundException.php');
 
   class Division {
     public $id;
@@ -69,7 +69,7 @@
         $list = array();
         $connection = MySqlConnection::getConnection();
         $query = 'select id, name, idConference from divisions order by id';
-        $command = $connection->prepare()($query);
+        $command = $connection->prepare($query);
         $command->execute();
         $command->bind_result($id, $name, $conference);
         while($command->fetch()){
@@ -82,7 +82,7 @@
 
       public static function getAllToJson() {
         $jsonArray = array();
-        foreach(self::getAll as $item){
+        foreach(self::getAll() as $item){
           array_push($jsonArray, json_decode($item->toJson()));
         }
         return json_encode($jsonArray);

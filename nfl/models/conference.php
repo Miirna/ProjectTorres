@@ -8,21 +8,11 @@
     public $name;
     public $logo;
 
-    public function getId(){
-      return $this->id;
-    }
-    public function setName($value){
-      return $this->name = $value;
-    }
-    public function getName(){
-      return $this->name;
-    }
-    public function setLogo($value){
-      return $this->logo = $value;
-    }
-    public function getLogo(){
-      return $this->logo;
-    }
+    public function getId(){ return $this->id; }
+    public function setName($value){ return $this->name = $value; }
+    public function getName(){ return $this->name; }
+    public function setLogo($value){ return $this->logo = $value; }
+    public function getLogo(){ return $this->logo; }
 
     public function __construct() {
         if (func_num_args() == 0){
@@ -61,7 +51,7 @@
       return json_encode(array(
         'id' => $this->id,
         'name' => $this->name,
-        'logo' => Config::getFileURL('conferences').$this->logo
+        'logo' => Config::getFileUrl('conferences').$this->logo
       ));
     }
 
