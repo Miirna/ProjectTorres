@@ -3,7 +3,10 @@
 
   if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     if($parameters == ''){
-      echo Team::getAllToJson();      
+      echo json_encode(array(
+        'status' => 0,
+        'teams' => json_decode(Team::getAllToJson())   
+      ));   
     } else 
         //get one
         try {

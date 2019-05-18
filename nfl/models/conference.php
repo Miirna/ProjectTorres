@@ -22,7 +22,7 @@
         }
 
         if (func_num_args() == 1){
-          $arguments = func_get_args();
+          $arguments = func_get_arg();
           $connection = MySqlConnection::getConnection();
           $query = 'select id, name, logo from conferences where id = ?';
           $command = $connection->prepare($query);
@@ -35,15 +35,15 @@
             $this->logo = $logo;
           }
           else
-            throw new RecordNotFoundException(func_get_arg(0));
+            throw new RecordNotFoundException($arguments[0]);
           mysqli_stmt_close($command);
           $connection->close();
         }
 
         if (func_num_args() == 3){
-          $this->id = func_get_args(0);
-          $this->name = func_get_args(1);
-          $this->logo = func_get_args(2);
+          $this->id = func_get_arg(0);
+          $this->name = func_get_arg(1);
+          $this->logo = func_get_arg(2);
         }
     }
 
