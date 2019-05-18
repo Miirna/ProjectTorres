@@ -8,6 +8,7 @@
     private $id;
     private $name;
     private $logo;
+    private $division;
 
     //getters and setters
     public function getId() { return $this->id; }
@@ -16,6 +17,8 @@
     public function setName($name) { $this->name = $name; }
     public function getLogo() { return $this->logo; }
     public function setLogo($logo) { $this->logo = $logo; }
+    public function getDivision(){ return $this->division; }
+    public function setDivision($division) {$this->division = $division; }
 
     //constructor
     public function __construct() {
@@ -24,21 +27,36 @@
         $this->id = '';
         $this->name = '';
         $this->logo = '';
+        $this->division = '';
       }
       //get data from database
       if (func_num_args() == 1) {
+        $arguments = func_get_arg();
         $connection = MySqlConnection::getConnection(); //get connection
-        $query = 'select id, name, logo from teams where id = ?'; //query
+        $query = 'select t.id, t.name, t.logo, d.id, d.name, d.idConference
+                  from teams as t join divisions as d 
+                  on t.idDivision = d.id where t.id = ?'; //query
         $command = $connection->prepare($query); //prepare statement
-        $command->bind_param('s', func_get_arg(0)); //parameters
+        $command->bind_param('s', $arguments[0]); //parameters
         $command->execute(); //execute
-        $command->bind_result($id, $name, $logo); //bind results
+        $command->bind_result(
+          $id, 
+          $name, 
+          $logo, 
+          $divisionId,
+          $divisionName,
+          $divisionConference
+        ); //bind results
         //record was found
         if ($command->fetch()) {
           //pass values to the attributes
           $this->id = $id;
           $this->name = $name;
           $this->logo = $logo;
+          $this->division = new Division(
+            $divisionId, 
+            $divisionName, 
+            $divisionConference);
         }
         else
           throw new RecordNotFoundException(func_get_arg(0));
@@ -62,6 +80,15 @@
         'id' => $this->id,
         'name' => $this->name,
         'logo' => Config::getFileUrl('teams').$this->logo
+      ));
+    }
+
+    public function toJsonFull(){
+      return json_encode(array(
+        'id' => $this->id,
+        'name' => $this->name,
+        'logo' => $this->logo,
+        'divicions' => json_decode($this->division->toJson())
       ));
     }
 

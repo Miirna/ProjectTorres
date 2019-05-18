@@ -15,7 +15,7 @@
           //display as JSON
           echo json_encode(array(
             'status' => 0,
-            'team' => json_decode($t->toJson())
+            'team' => json_decode($t->toJsonFull())
           ));
         }
         catch(RecordNotFoundException $ex){
