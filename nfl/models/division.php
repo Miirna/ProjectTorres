@@ -49,11 +49,16 @@
           $connection->close();
         }
 
+        if(func_get_args() == 2){
+          $this->id = func_get_arg(0);
+          $this->name = func_get_arg(1);
+        }
+
         if (func_num_args() == 3){
           $this->id = func_get_arg(0);
           $this->name = func_get_arg(1);
           $this->conference = func_get_arg(2);
-        }
+        }        
       }
 
       //class methods

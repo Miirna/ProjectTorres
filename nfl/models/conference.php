@@ -2,6 +2,8 @@
   require_once(__DIR__.'/../config/config.php');
   require_once('connection.php');
   require_once('exception/recordNotFoundException.php');
+  require_once('team.php');
+  require_once('division.php');
   class Conference 
   {
     public $id;
@@ -22,7 +24,7 @@
         }
 
         if (func_num_args() == 1){
-          $arguments = func_get_arg();
+          $arguments = func_get_args();
           $connection = MySqlConnection::getConnection();
           $query = 'select id, name, logo from conferences where id = ?';
           $command = $connection->prepare($query);
@@ -55,6 +57,19 @@
       ));
     }
 
+    public function toJsonFull(){
+      $jsonArray = array();
+      foreach(self::getDivisions() as $item){
+        array_push($jsonArray, json_decode($item->toJson()));
+      }
+      return json_encode(array(
+        'id' => $this->id,
+        'name' => $this->name,
+        'logo' => $this->logo,
+        'divisons' => $jsonArray
+      ));
+    }
+
     public static function getAll(){
       $list = array();
       $connection = MySqlConnection::getConnection();
@@ -64,6 +79,23 @@
       $command->bind_result($id, $name, $logo);
       while($command->fetch()){
         array_push($list, new Conference($id, $name, $logo));
+      }
+      mysqli_stmt_close($command);
+      $connection->close();
+      return $list;
+    }
+
+    public function getDivisions(){
+      $list = array();
+      $connection = MySqlConnection::getConnection();
+      $query = 'select id, name 
+                from divisions where idConference = ? order by id';
+      $command = $connection->prepare($query);
+      $command->bind_param('s', $this->id);
+      $command->execute();
+      $command->bind_result($id, $name);
+      while($command->fetch()){
+        array_push($list, new Division($id, $name));
       }
       mysqli_stmt_close($command);
       $connection->close();
