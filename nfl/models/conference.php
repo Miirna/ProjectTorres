@@ -30,7 +30,11 @@
           $command = $connection->prepare($query);
           $command->bind_param('s', $arguments[0]);
           $command->execute();
-          $command->bind_result($id, $name, $logo);
+          $command->bind_result(
+            $id, 
+            $name, 
+            $logo
+          );
           if($command->fetch()){
             $this->id = $id;
             $this->name = $name;
@@ -88,8 +92,7 @@
     public function getDivisions(){
       $list = array();
       $connection = MySqlConnection::getConnection();
-      $query = 'select id, name 
-                from divisions where idConference = ? order by id';
+      $query = 'select id, name from divisions where idConference = ?';
       $command = $connection->prepare($query);
       $command->bind_param('s', $this->id);
       $command->execute();

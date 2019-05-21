@@ -1,4 +1,5 @@
 <?php
+  require_once(__DIR__.'/../config/config.php');
   require_once('conference.php');
   require_once('connection.php');
   require_once('team.php');
@@ -49,7 +50,7 @@
           $connection->close();
         }
 
-        if(func_get_args() == 2){
+        if(func_num_args() == 2){
           $this->id = func_get_arg(0);
           $this->name = func_get_arg(1);
         }
@@ -59,49 +60,43 @@
           $this->name = func_get_arg(1);
           $this->conference = func_get_arg(2);
         }        
-      }
+    }
 
-      //class methods
-      public function toJson() {
-        return json_encode(array(
-          'id' => $this->id,
-          'name'=> $this->name
-        ));
-      }
-      
-      
-      public function toJsonFull() {
-        $jsonArray = array();
-        foreach(self::getTeams() as $item){
-          array_push($jsonArray, json_decode($item->toJson()));
-        }
-        return json_encode(array(
-          'id' => $this->id,
-          'name'=> $this->name,
-          'conference'=> json_decode($this->conference->toJson()),
-          'teams' => $jsonArray
-        ));
-      }
+    //class methods
+    public function toJson() {
+      return json_encode(array(
+        'id' => $this->id,
+        'name'=> $this->name
+      ));
+    }  
+    
+    public function toJsonMedium() {
+      return json_encode(array(
+        'id' => $this->id,
+        'name'=> $this->name,
+        'conference'=> json_decode($this->conference->toJson())
+      ));
+    }   
 
-      public static function getAll(){
-        $list = array();
-        $connection = MySqlConnection::getConnection();
-        $query = 'select id, name, idConference from divisions order by id';
-        $command = $connection->prepare($query);
-        $command->execute();
-        $command->bind_result($id, $name, $conference);
-        while($command->fetch()){
-          array_push($list, new Division($id, $name, $conference));
-        }
-        mysqli_stmt_close($command);
-        $connection->close();
-        return $list;
+    public static function getAll(){
+      $list = array();
+      $connection = MySqlConnection::getConnection();
+      $query = 'select id, name, idConference from divisions order by id';
+      $command = $connection->prepare($query);
+      $command->execute();
+      $command->bind_result($id, $name, $conference);
+      while($command->fetch()){
+        array_push($list, new Division($id, $name, $conference));
       }
+      mysqli_stmt_close($command);
+      $connection->close();
+      return $list;
+    }
 
-      public function getTeams(){
-        $list = array();
-        $connection = MySqlConnection::getConnection();
-        $query = 'select id, name, logo 
+    public function getTeams(){
+      $list = array();
+      $connection = MySqlConnection::getConnection();
+      $query = 'select id, name, logo 
                   from teams where idDivision = ? order by id';
         $command = $connection->prepare($query);
         $command->bind_param('s', $this->id);
@@ -115,14 +110,26 @@
         return $list;
       }
 
-
-      public static function getAllToJson() {
-        $jsonArray = array();
-        foreach(self::getAll() as $item){
-          array_push($jsonArray, json_decode($item->toJson()));
-        }
-        return json_encode($jsonArray);
+    public function toJsonFull() {
+      $jsonArray = array();
+      foreach(self::getTeams() as $item){
+        array_push($jsonArray, json_decode($item->toJson()));
       }
+      return json_encode(array(
+        'id' => $this->id,
+        'name'=> $this->name,
+        'conference'=> json_decode($this->conference->toJson()),
+        'teams' => $jsonArray
+      ));
+    }
+
+    public static function getAllToJson() {
+      $jsonArray = array();
+      foreach(self::getAll() as $item){
+        array_push($jsonArray, json_decode($item->toJson()));
+      }
+      return json_encode($jsonArray);
+    }
   }
 
  ?>

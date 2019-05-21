@@ -2,6 +2,8 @@
   require_once(__DIR__.'/../config/config.php');
   require_once('connection.php');
   require_once('exception/recordNotFoundException.php');
+  require_once('division.php');
+  require_once('conference.php');
     
   class Team {
     //attributes
@@ -31,11 +33,11 @@
       }
       //get data from database
       if (func_num_args() == 1) {
-        $arguments = func_get_arg();
+        $arguments = func_get_args();
         $connection = MySqlConnection::getConnection(); //get connection
-        $query = 'select t.id, t.name, t.logo, d.id, d.name, d.idConference
-                  from teams as t join divisions as d 
-                  on t.idDivision = d.id where t.id = ?'; //query
+        $query = 'select t.id, t.name, t.logo, d.id, d.name, c.id, c.name, c.logo 
+                  from teams as t join divisions as d on t.idDivision = d.id join 
+                  conferences as c on d.idConference = c.id where t.id = ?'; //query
         $command = $connection->prepare($query); //prepare statement
         $command->bind_param('s', $arguments[0]); //parameters
         $command->execute(); //execute
@@ -43,9 +45,11 @@
           $id, 
           $name, 
           $logo, 
-          $divisionId,
-          $divisionName,
-          $divisionConference
+          $idDivision,
+          $nameDivision,
+          $idConference,
+          $nameConference,
+          $logoConference
         ); //bind results
         //record was found
         if ($command->fetch()) {
@@ -54,9 +58,14 @@
           $this->name = $name;
           $this->logo = $logo;
           $this->division = new Division(
-            $divisionId, 
-            $divisionName, 
-            $divisionConference);
+            $idDivision, 
+            $nameDivision, 
+            new Conference(
+              $idConference, 
+              $nameConference, 
+              $logoConference
+            )
+          );
         }
         else
           throw new RecordNotFoundException(func_get_arg(0));
@@ -88,7 +97,7 @@
         'id' => $this->id,
         'name' => $this->name,
         'logo' => $this->logo,
-        'divicions' => json_decode($this->division->toJson())
+        'divisions' => json_decode($this->division->toJsonMedium())
       ));
     }
 
